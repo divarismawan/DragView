@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,19 +16,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FilmAdapter.OnClickListener {
 
-    LinearLayout layout_minimize;
+    static CardView layout_minimize;
     ImageView iv_close;
     ImageView iv_playpause;
 
-    ImageView iv_thumbnail;
-    TextView tv_song, tv_singer;
+    static ImageView iv_thumbnail;
+    static TextView tv_song;
+    static TextView tv_singer;
 
     RecyclerView recyclerView;
     FilmAdapter filmAdapter;
@@ -46,23 +47,18 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        intent = new Intent(MainActivity.this, Slideup.class);
-
-
-
+        intent          = new Intent(MainActivity.this, Slideup.class);
         recyclerView    = findViewById(R.id.my_recycler_view);
-
         layout_minimize = findViewById(R.id.layout_minimize);
+
         iv_close        = findViewById(R.id.iv_close);
         iv_playpause    = findViewById(R.id.iv_pauseplay);
+        iv_thumbnail    = findViewById(R.id.iv_thumbnail);
 
         tv_song         = findViewById(R.id.tv_song);
         tv_singer       = findViewById(R.id.tv_singer);
-        iv_thumbnail    = findViewById(R.id.iv_thumbnail);
 
         iv_playpause.setBackgroundResource(R.drawable.ic_play);
-
-
         layout_minimize.setVisibility(View.GONE);
 
         arrayList = new ArrayList<>();
@@ -78,9 +74,6 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.OnCli
         recyclerView.setAdapter(filmAdapter);
 
         filmAdapter.setOnClickListener(MainActivity.this);
-
-
-
     }
 
     public void onClickClose(View view){
@@ -108,9 +101,9 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.OnCli
     }
 
     @Override
-    public void OnItemClick(int positon) {
+    public void OnItemClick(int position) {
         Intent intent = new Intent(this,Slideup.class);
-        ModelFilm modelFilm = arrayList.get(positon);
+        ModelFilm modelFilm = arrayList.get(position);
 
         getThumbnail = modelFilm.getThubnail();
         getSinger    = modelFilm.getGenre();
@@ -120,10 +113,13 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.OnCli
         intent.putExtra("title",getSong);
         intent.putExtra("genre",getSinger);
 
+        Log.d("MINIMIZE", "thumbnail"+getThumbnail+" Singer "+getSinger);
+
         startActivityForResult(intent,1);
 
     }
 
+//    Cara ribet
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -135,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.OnCli
             int Thumbnail;
             if (status) {
                 Log.d("MINIMIZE","Data terkirim");
-                Toast.makeText(this, "Tampil", Toast.LENGTH_SHORT).show();
                 layout_minimize.setVisibility(View.VISIBLE);
                 Singer = data.getStringExtra("title");
                 Song = data.getStringExtra("genre");
@@ -144,12 +139,28 @@ public class MainActivity extends AppCompatActivity implements FilmAdapter.OnCli
                 tv_song.setText(Singer);
                 tv_singer.setText(Song);
                 iv_thumbnail.setImageResource(Thumbnail);
+
+                Log.d("MINIMIZE", "thumbnail :"+Thumbnail+" Singer :"+Singer);
+
             } else {
                 layout_minimize.setVisibility(View.GONE);
                 Log.d("MINIMIZE","Data gagal terkirim");
             }
         }else {
             Log.d("MINIMIZE","BACKPRESS GAGAL");
+        }
+    }
+
+//    Cara gampang
+    public static void setUpMinimize(Boolean status, String Singer, String Song, int Thumbnail) {
+        if (status) {
+            Log.d("MINIMIZE", "Data terkirim");
+            layout_minimize.setVisibility(View.VISIBLE);
+            tv_song.setText(Singer);
+            tv_singer.setText(Song);
+            iv_thumbnail.setImageResource(Thumbnail);
+        }else {
+            layout_minimize.setVisibility(View.GONE);
         }
     }
 }

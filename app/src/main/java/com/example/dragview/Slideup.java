@@ -1,12 +1,12 @@
 package com.example.dragview;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class Slideup extends AppCompatActivity {
 
@@ -40,16 +40,29 @@ public class Slideup extends AppCompatActivity {
 
     }
 
+    public static void putDataSinger(Context context, String song, String singer, int thumbnail){
+        Intent intent = new Intent(context,Slideup.class);
+        intent.putExtra("title",song);
+        intent.putExtra("genre",singer);
+        intent.putExtra("thumbnail",thumbnail);
+        context.startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
+
+
+
         intent = new Intent();
+        MainActivity.setUpMinimize(true,Singer,Song,Thumbnail);
         Log.d("MINIMIZE","Singer :"+Singer+" Song :"+Song);
+
         intent.putExtra("title",Singer);
         intent.putExtra("genre",Song);
         intent.putExtra("thumbnail",Thumbnail);
         intent.putExtra("status", true);
+
         setResult(RESULT_OK,intent);
-        Log.d("MINIMIZE","Terkirim");
         finish();
     }
 }
